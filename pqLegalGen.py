@@ -91,6 +91,9 @@ def main():
     with open ('./qLegal/exist.txt', 'w' ) as f:
         for item in qCanFromExist:
             f.write(str(item) + '\n')
+            
+# TODO generate pTraversal
+# p<-q for each p, what q is it? Or which block can be the adding block?
         
         
 if __name__ == '__main__':
