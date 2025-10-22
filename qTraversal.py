@@ -25,8 +25,8 @@ class traversal:
         return result
     
 def main_1():
-    traversalSum = 256
-    while(traversalSum >=256):
+    traversalSum = 150
+    while(traversalSum >=150):
         tempResult = deque()
         tempResult.append(traversal([0] * 8, traversalSum, 0, 0))
         while(len(tempResult) > 0):

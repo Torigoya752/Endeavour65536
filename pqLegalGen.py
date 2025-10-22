@@ -10,7 +10,7 @@ logging.basicConfig(
     filemode='w'  
 )
 
-def main():
+def GenerateQLegal():
     logging.info('Starting program')
     qCanFromUp =[]
     qCanFromDown = []
@@ -94,7 +94,49 @@ def main():
             
 # TODO generate pTraversal
 # p<-q for each p, what q is it? Or which block can be the adding block?
+def GeneratePLegal():
+    # check if qLeagal exists
+    try:
+        with open("./qLegal/exist.txt", "r") as f:
+            lines = f.readlines()
+    except FileNotFoundError:
+        print("qLegal does not exist")
+        return
+    
+    resultToW = []
+    resultToWClassified = [[] for _ in range(17)]
+    # go for "0 1 4 + 15" like format
+    for line in lines:
+        # split the line by space
+        tempSplit = line.split()
+        # get the first element
+        qMask = int(tempSplit[0])
+        if(qMask == 0 or qMask == 65535):
+            continue
+        tempStr = ""
+        tempList = []
+        for i in range(0,16):
+            if(qMask & (1 << i)):
+                tempStr += str(i) + " "
+                tempList.append(i)
+        tempStr += "+ "
+        
+        for i in range(16):
+            if(i not in tempList):
+                resultToW.append(tempStr + str(i))
+    
+    # classify from resultToW to resultToWClassified
+    for item in resultToW:
+        resultToWClassified[len(item.rstrip().split())-1].append(item)
+                
+    try:
+        for i in range(1,17):
+            with open("./pLegal/exist"+str(i)+".txt", "w") as f:
+                for item in resultToWClassified[i]:
+                    f.write(str(item) + '\n')
+    except FileNotFoundError:
+        print("pLegal does not exist")
         
         
 if __name__ == '__main__':
-    pass
+    GeneratePLegal()

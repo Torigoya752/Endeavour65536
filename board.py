@@ -50,6 +50,115 @@ with open ("./qLegal/exist.txt", "r") as f:
 QEXIST = []
 for line in lines:
     QEXIST.append(int(line.rstrip()))
+    
+class P:
+    def __init__(self,str1):
+        tempSplit = str1.rstrip().split("!")
+        '''
+        *CaseType[2]
+        !*CaseValue[2](每个类型的具体值，如“并1，+254”中的“254”）
+        {!S*SuccessRate[8]}（仅出现在p类是特殊的类，用8个字符表示成功率）
+        {!B*Direction[1]*QCaseType[2]CaseValue[2]*Q[16]*SuccessRate[8]} （当且仅当算出了最好的一步，用1个字符表示方向，8个字符）
+        {!U*QCaseType[2]CaseValue[2]*Q[16]*SuccessRate[8]} （往上移动，往下往左往右同理，此处省略）
+        {!Q*QCaseType[2]CaseValue[2]*Q[16]} （源自哪个Q）
+        '''
+        self.caseType = tempSplit[0]
+        self.caseValue = tempSplit[1]
+        i = 2
+        if(i<len(tempSplit) and tempSplit[i][0] == "S"):
+            self.specialP = True
+            self.successRate = tempSplit[i][1:]
+            i += 1
+        else:
+            self.specialP = False
+            self.successRate = None
+            
+        if(i<len(tempSplit) and tempSplit[i][0] == "B"):
+            self.bestValid = True
+            self.bestDirection = tempSplit[i][1]
+            self.bestQCaseType = tempSplit[i][2:4]
+            self.bestQCaseValue = tempSplit[i][4:6]
+            self.bestQBoard = tempSplit[i][6:22]
+            self.bestSuccessRate = tempSplit[i][22:30]
+            i += 1
+        else:
+            self.bestValid = False
+            self.bestDirection = None
+            self.bestQCaseType = None
+            self.bestQCaseValue = None
+            self.bestQBoard = None
+            self.bestSuccessRate = None
+            
+        if(i<len(tempSplit) and tempSplit[i][0] == "U"):
+            self.uValid = True
+            self.uQCaseType = tempSplit[i][1:3]
+            self.uQCaseValue = tempSplit[i][3:5]
+            self.uQBoard = tempSplit[i][5:21]
+            self.uSuccessRate = tempSplit[i][21:29]
+            i += 1
+        else:
+            self.uValid = False
+            self.uQCaseType = None
+            self.uQCaseValue = None
+            self.uQBoard = None
+            self.uSuccessRate = None
+            
+        if(i<len(tempSplit) and tempSplit[i][0] == "D"):
+            self.dValid = True
+            self.dQCaseType = tempSplit[i][1:3]
+            self.dQCaseValue = tempSplit[i][3:5]
+            self.dQBoard = tempSplit[i][5:21]
+            self.dSuccessRate = tempSplit[i][21:29]
+            i += 1
+        else:
+            self.dValid = False
+            self.dQCaseType = None
+            self.dQCaseValue = None
+            self.dQBoard = None
+            self.dSuccessRate = None
+            
+        if(i<len(tempSplit) and tempSplit[i][0] == "L"):
+            self.lValid = True
+            self.lQCaseType = tempSplit[i][1:3]
+            self.lQCaseValue = tempSplit[i][3:5]
+            self.lQBoard = tempSplit[i][5:21]
+            self.lSuccessRate = tempSplit[i][21:29]
+            i += 1
+        else:
+            self.lValid = False
+            self.lQCaseType = None
+            self.lQCaseValue = None
+            self.lQBoard = None
+            self.lSuccessRate = None
+            
+        if(i<len(tempSplit) and tempSplit[i][0] == "R"):
+            self.rValid = True
+            self.rQCaseType = tempSplit[i][1:3]
+            self.rQCaseValue = tempSplit[i][3:5]
+            self.rQBoard = tempSplit[i][5:21]
+            self.rSuccessRate = tempSplit[i][21:29]
+            i += 1
+        else:
+            self.rValid = False
+            self.rQCaseType = None
+            self.rQCaseValue = None
+            self.rQBoard = None
+            self.rSuccessRate = None
+            
+        self.qList = []
+        
+        if(i<len(tempSplit)):
+            self.possessSourceQ = True
+        else:
+            self.possessSourceQ = False # TODO it should be a dead case. Do NOT genetate the P
+        
+        while(i<len(tempSplit)):
+            if(tempSplit[i][0]!="Q"):
+                raise Err65536("Illegal P string. The capital of the last section is NOT Q")
+            # for each element in qList, just write *QCaseType[2]CaseValue[2]*Q[16]
+            self.qList.append(tempSplit[i][1:21])
+            i+=1
+        
 
 
 class Q:
