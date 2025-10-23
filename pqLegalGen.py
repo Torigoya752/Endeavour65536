@@ -57,40 +57,47 @@ def GenerateQLegal():
         else:
             tempCanFromExist = False
             
+        # calculate how many squares are occupied 
+        tempOccupied = 0
+        for i in range(16):
+            if(traversal & (1 << i)):
+                tempOccupied += 1
+            
         if(tempCanFromUp):
-            qCanFromUp.append(traversal)
+            qCanFromUp.append((traversal,tempOccupied))
             
         if(tempCanFromDown):
-            qCanFromDown.append(traversal)
+            qCanFromDown.append((traversal,tempOccupied))
             
         if(tempCanFromLeft):
-            qCanFromLeft.append(traversal)
+            qCanFromLeft.append((traversal,tempOccupied))
             
         if(tempCanFromRight):
-            qCanFromRight.append(traversal)
+            qCanFromRight.append((traversal,tempOccupied))
 
         if(tempCanFromExist):
-            qCanFromExist.append(traversal)
+            qCanFromExist.append((traversal,tempOccupied))
             
     with open ('./qLegal/up.txt', 'w' ) as f:
         for item in qCanFromUp:
-            f.write(str(item) + '\n')
+            f.write(str(str(item[0]) + ' ' + str(item[1]) + '\n'))
             
     with open ('./qLegal/down.txt', 'w' ) as f:
         for item in qCanFromDown:
-            f.write(str(item) + '\n')
+            f.write(str(str(item[0]) + ' ' + str(item[1]) + '\n'))
             
     with open ('./qLegal/left.txt', 'w' ) as f:
         for item in qCanFromLeft:
-            f.write(str(item) + '\n')
+            f.write(str(str(item[0]) + ' ' + str(item[1]) + '\n'))
             
     with open ('./qLegal/right.txt', 'w' ) as f:
         for item in qCanFromRight:
-            f.write(str(item) + '\n')
+            f.write(str(str(item[0]) + ' ' + str(item[1]) + '\n'))
             
     with open ('./qLegal/exist.txt', 'w' ) as f:
         for item in qCanFromExist:
-            f.write(str(item) + '\n')
+            f.write(str(str(item[0]) + ' ' + str(item[1]) + '\n'))
+            
             
 # TODO generate pTraversal
 # p<-q for each p, what q is it? Or which block can be the adding block?
@@ -139,4 +146,4 @@ def GeneratePLegal():
         
         
 if __name__ == '__main__':
-    GeneratePLegal()
+    GenerateQLegal()

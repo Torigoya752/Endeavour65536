@@ -16,40 +16,47 @@ class Err65536(Exception):
 # load qLegal
 with open ("./qLegal/up.txt", "r") as f:
     lines = f.readlines()
-QCANFROMUP = []
+qCanFromUpList = []
 for line in lines:
-    QCANFROMUP.append(int(line.rstrip()))
-
+    qCanFromUpList.append(int(line.rstrip()))
+QCANFROMUP = tuple(qCanFromUpList)
 
 # down
 with open ("./qLegal/down.txt", "r") as f:
     lines = f.readlines()
-QCANFROMDOWN = []
+qCanFromDownList = []
 for line in lines:
-    QCANFROMDOWN.append(int(line.rstrip()))
+    qCanFromDownList.append(int(line.rstrip()))
+QCANFROMDOWN = tuple(qCanFromDownList)
 
 
 # left
 with open ("./qLegal/left.txt", "r") as f:
     lines = f.readlines()
-QCANFROMLEFT = []
+qCanFromLeftList = []
 for line in lines:
-    QCANFROMLEFT.append(int(line.rstrip()))
-
+    qCanFromLeftList.append(int(line.rstrip()))
+QCANFROMLEFT = tuple(qCanFromLeftList)
 
 # right
 with open ("./qLegal/right.txt", "r") as f:
     lines = f.readlines()
-QCANFROMRIGHT = []
+qCanFromRightList = []
 for line in lines:
-    QCANFROMRIGHT.append(int(line.rstrip()))
+    qCanFromRightList.append(int(line.rstrip()))
+QCANFROMRIGHT = tuple(qCanFromRightList)
     
 # exist
 with open ("./qLegal/exist.txt", "r") as f:
     lines = f.readlines()
-QEXIST = []
+qExistList = []
 for line in lines:
-    QEXIST.append(int(line.rstrip()))
+    qExistList.append(int(line.rstrip()))
+QEXIST = tuple(qExistList)
+    
+def CalulateTotalPossibilities(str1):
+    # ascii 40-126 are available in str1
+    return (ord(str1[0])-40)*87 + (ord(str1[1])-40)
     
 class P:
     def __init__(self,str1):
@@ -160,72 +167,51 @@ class P:
             i+=1
         
 
-
-class Q:
-    def __init__(self, list_1, rate):
-        self.board = copy.deepcopy(list_1)
-        self.rate = rate
-        self.canFromUp = True
-        self.canFromDown = True
-        self.canFromLeft = True
-        self.canFromRight = True
-        self.containNumberMask = 0
-        for i in range(4):
-            for j in range(4):
-                if(self.board[i][j] != 0):
-                    self.containNumberMask += (1 << (i*4 + j))
+class FutureP:
+    def __init__(self,str1):
+        # *PCaseType[2]*CaseValue[2]*P[16]*SuccessRate[8]
+        self.caseType = str1[0:2]
+        self.caseValue = str1[2:4]
+        self.pBoard = str1[4:20]
+        self.successRate = str1[20:28]
         
-    def tryFromUp(self):
-        if(self.containNumberMask not in QCANFROMUP):
-            self.canFromUp = False
-            return
-                
-        for j in range(4):
-            if(self.board[2][j]!= 0 and self.board[3][j] == 0 and self.board[0][j] == self.board[1][j] and self.board[1][j] == self.board[2][j]):
-                self.canFromUp = False
-                return
-            if(self.board[3][j] != 0 and (self.board[0][j] == self.board[1][j] or self.board[1][j] == self.board[2][j] or self.board[2][j] == self.board[3][j])):
-                self.canFromUp = False
-                return
-            
-    def tryFromDown(self):
-        if(self.containNumberMask not in QCANFROMDOWN):
-            self.canFromDown = False
-            return
-                
-        for j in range(4):
-            if(self.board[1][j]!= 0 and self.board[0][j] == 0 and self.board[2][j] == self.board[3][j] and self.board[1][j] == self.board[2][j]):
-                self.canFromDown = False
-                return
-            if(self.board[0][j] != 0 and (self.board[1][j] == self.board[2][j] or self.board[2][j] == self.board[3][j] or self.board[1][j] == self.board[0][j])):
-                self.canFromDown = False
-                return
-                
-    def tryFromLeft(self):
-        if(self.containNumberMask not in QCANFROMLEFT):
-            self.canFromLeft = False
-            return
-                
-        for i in range(4):
-            if(self.board[i][2] != 0 and self.board[i][0] == 0 and self.board[i][1] == self.board[i][2]):
-                self.canFromLeft = False
-                return
-            if(self.board[i][3] != 0 and (self.board[i][1] == self.board[i][2] or self.board[i][2] == self.board[i][3] or self.board[i][1] == self.board[i][0])):
-                self.canFromLeft = False
-                return
-                
-    def tryFromRight(self):
-        if(self.containNumberMask not in QCANFROMRIGHT):
-            self.canFromRight = False
-            return
-                
-        for i in range(4):
-            if(self.board[i][1] != 0 and self.board[i][3] == 0 and self.board[i][2] == self.board[i][1]):
-                self.canFromRight = False
-                return
-            if(self.board[i][0] != 0 and (self.board[i][2] == self.board[i][1] or self.board[i][1] == self.board[i][0] or self.board[i][2] == self.board[i][3])):
-                self.canFromRight = False
-                return
+class PastP:
+    def __init__(self,str1):
+        # *PCaseType[2]*CaseValue[2]*P[16]
+        self.caseType = str1[0:2]
+        self.caseValue = str1[2:4]
+        self.pBoard = str1[4:20]
+        
+class Q:
+    def __init__(self, str1):
+        tempSplit = str1.split("!")
+        '''
+        *CaseType[2]
+        !*CaseValue[2]
+        !T*TotalPossibilites[2] （等于空位数×10，考虑所有出2和出4的情况）
+        {!*Special*SuccessRate[8]}（*Special在特殊情况中是S，普通情况中是N）
+        {!p*PCaseType[2]*CaseValue[2]*P[16]*SuccessRate[8]} （未来的P，可重复）
+        {!P*PCaseType[2]CaseValue[2]*P[16]} （源自什么样的P可重复）
+        '''
+        self.caseType = tempSplit[0]
+        self.caseValue = tempSplit[1]
+        self.totalPossibilities = CalulateTotalPossibilities(tempSplit[2])
+        self.specialCase = tempSplit[3][0]=="S"
+        self.successRate = tempSplit[3][1:9]
+        i = 4
+        self.pastPList = []
+        self.futurePList = []
+        while(i<len(tempSplit)):
+            if(tempSplit[i][0]=="p"):
+                self.futurePListList.append(FutureP(tempSplit[i][1:]))
+            elif(tempSplit[i][0]=="P"):
+                self.pList.append(PastP(tempSplit[i][1:]))
+            else:
+                raise Err65536("Illegal Q string. The first letter of the section is NOT p or P")
+        
+        
+        
+    
         
         
 
