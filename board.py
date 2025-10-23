@@ -18,7 +18,7 @@ with open ("./qLegal/up.txt", "r") as f:
     lines = f.readlines()
 qCanFromUpList = []
 for line in lines:
-    qCanFromUpList.append(int(line.rstrip()))
+    qCanFromUpList.append(int(line.rstrip()[0]))
 QCANFROMUP = tuple(qCanFromUpList)
 
 # down
@@ -26,7 +26,7 @@ with open ("./qLegal/down.txt", "r") as f:
     lines = f.readlines()
 qCanFromDownList = []
 for line in lines:
-    qCanFromDownList.append(int(line.rstrip()))
+    qCanFromDownList.append(int(line.rstrip()[0]))
 QCANFROMDOWN = tuple(qCanFromDownList)
 
 
@@ -35,7 +35,7 @@ with open ("./qLegal/left.txt", "r") as f:
     lines = f.readlines()
 qCanFromLeftList = []
 for line in lines:
-    qCanFromLeftList.append(int(line.rstrip()))
+    qCanFromLeftList.append(int(line.rstrip()[0]))
 QCANFROMLEFT = tuple(qCanFromLeftList)
 
 # right
@@ -43,7 +43,7 @@ with open ("./qLegal/right.txt", "r") as f:
     lines = f.readlines()
 qCanFromRightList = []
 for line in lines:
-    qCanFromRightList.append(int(line.rstrip()))
+    qCanFromRightList.append(int(line.rstrip()[0]))
 QCANFROMRIGHT = tuple(qCanFromRightList)
     
 # exist
@@ -51,7 +51,7 @@ with open ("./qLegal/exist.txt", "r") as f:
     lines = f.readlines()
 qExistList = []
 for line in lines:
-    qExistList.append(int(line.rstrip()))
+    qExistList.append(int(line.rstrip()[0]))
 QEXIST = tuple(qExistList)
     
 def CalulateTotalPossibilities(str1):
