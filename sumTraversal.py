@@ -26,13 +26,14 @@ class traversal:
         return result
     
 def traversalFunc(traversalSum, blockUsed):
-    
+    result = deque()
     tempResult = deque()
     tempResult.append(traversal([0] * 8, traversalSum, 0, 0,15-blockUsed))
     while(len(tempResult) > 0):
         tempLeft = tempResult.popleft()
         if(tempLeft.remainSum == 0):
             logging.info(tempLeft.list_1[:])
+            result.append(tempLeft.list_1[:])
         elif(tempLeft.goForNext >= 8):
             # do nothing. Cannot go for next but remain sum is not 0
             pass
@@ -40,7 +41,8 @@ def traversalFunc(traversalSum, blockUsed):
             tempToAppend = tempLeft.BfsTraversal()
             for item in tempToAppend:
                 tempResult.append(copy.deepcopy(item))
+    return result # deque format
         
         
 if(__name__ == "__main__"):
-    pass
+    print(traversalFunc(12,2))
