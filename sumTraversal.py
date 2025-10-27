@@ -32,7 +32,7 @@ def traversalFunc(traversalSum, blockUsed):
     while(len(tempResult) > 0):
         tempLeft = tempResult.popleft()
         if(tempLeft.remainSum == 0):
-            logging.info(tempLeft.list_1[:])
+            # logging.info(tempLeft.list_1[:])
             result.append(tempLeft.list_1[:])
         elif(tempLeft.goForNext >= 8):
             # do nothing. Cannot go for next but remain sum is not 0
@@ -45,4 +45,4 @@ def traversalFunc(traversalSum, blockUsed):
         
         
 if(__name__ == "__main__"):
-    print(traversalFunc(12,2))
+    print(traversalFunc(98,2))
