@@ -18,15 +18,15 @@ class traversal:
         result = []
         for i in range(16 - self.blockUsed):
             tempNextNumber = 256 >> self.goForNext
-            if(self.remainSum - tempNextNumber * i >= 0 and self.blockUsed + i <= 11):
+            if(self.remainSum - tempNextNumber * i >= 0 and self.blockUsed + i <= 13):
                 tempList_1 = self.list_1[:]
                 tempList_1[self.goForNext] = i
                 result.append(traversal(tempList_1, self.remainSum - tempNextNumber * i, self.blockUsed + i, self.goForNext + 1))
         return result
     
 def main_1():
-    traversalSum = 70
-    while(traversalSum >=70):
+    traversalSum = 78
+    while(traversalSum >=78):
         tempResult = deque()
         tempResult.append(traversal([0] * 8, traversalSum, 0, 0))
         while(len(tempResult) > 0):
