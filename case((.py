@@ -83,7 +83,7 @@ def traversal989694():
             self.listCanFillIndex = []
             i = len(listPositionsToFill) - 1
             tempSpaceCounted = 0
-            while(i>=nextIndexToFill and i>0):
+            while(i>=nextIndexToFill and i>=0):
                 if(listBoard[listPositionsToFill[i]] == 0):
                     tempSpaceCounted += 1
                     if(tempSpaceCounted >= currentCandidateNumLeft[-1]):
@@ -110,9 +110,24 @@ def traversal989694():
                 result.append(bfsProcess(tempCandidateSeq,tempCurrentCandidateNumLeft,tempNextIndexToFill,tempListPositionsToFill,tempBoard))
                 
             # return a list
-            pass
+            return result
     
     # test with a small case
+    exampleProcess = bfsProcess([6,5,4,3,2,1],[1,1,1,1,1,1],0,[0,1,2,4,5,8],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+    deque2bfs = deque()
+    deque2bfs.append(exampleProcess)
+    while(deque2bfs):
+        tempProcess = deque2bfs.popleft()
+        if(len(tempProcess.candidateSeq)>0):
+            tempResult = tempProcess.goForward()
+            print(len(tempResult))
+            for item in tempResult:
+                deque2bfs.append(item)
+                logging.info(item.board)
+        else:
+            logging.info(tempProcess.board)
+            # TODO nextIndexToFill does not change to 0 when a new kind of number is to be filled. Fix it
+    
     
         
 
