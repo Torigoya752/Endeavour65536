@@ -6,7 +6,7 @@ from collections import deque
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    filename='65536.log',  
+    filename='./case0000.log',  
     filemode='w'  
 )
 
@@ -126,7 +126,7 @@ def traversal989694():
             return result
     
     # test with a small case
-    exampleProcess = bfsProcess([5,4,3,2,1],[2,1,1,2,1],0,[0,1,2,3,4,5,8,9,12],[0,3,3,3,0,0,0,0,0],[0,0,0,0,31,0,0,0,31,0,0,0,0,0,0,0])
+    exampleProcess = bfsProcess([4,2,1],[5,2,5],0,[0,1,2,3,4,5,6,7,8,9,10,12,13,14],[0,3,3,3,0,0,3,3,0,0,2,0,1,2],[0,0,0,0,31,0,0,0,31,0,0,0,0,0,0,0])
     deque2bfs = deque()
     deque2bfs.append(exampleProcess)
     while(deque2bfs):
@@ -138,6 +138,9 @@ def traversal989694():
                 # logging.info(item.board)
         else:
             logging.info(tempProcess.board)
+            
+    # When traversal Q98 notice that 32768s should be adjecent up and down on two rows
+    # And rows with 32768s should not both have 4 elements
             
     
     
