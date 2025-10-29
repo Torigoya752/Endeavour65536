@@ -139,8 +139,11 @@ def traversal989694():
         else:
             logging.info(tempProcess.board)
             
-    # When traversal Q98 notice that 32768s should be adjecent up and down on two rows
-    # And rows with 32768s should not both have 4 elements
+    # When traversal Q98
+    # I 32768 connect horizantally -> It is from a P 32768-16384-16384 or something like that
+    # II 32768 connect vertically -> the two rows with 32768 should not both have 4 elements
+    listCase0001P78 = []
+    
             
     
     
