@@ -12,7 +12,7 @@ logging.basicConfig(
 
 class Err65536(Exception):
     pass
-
+'''
 # load qLegal
 with open ("./qLegal/up.txt", "r") as f:
     lines = f.readlines()
@@ -53,7 +53,7 @@ qExistList = []
 for line in lines:
     qExistList.append(int(line.rstrip()[0]))
 QEXIST = tuple(qExistList)
-    
+'''    
 def CalulateTotalPossibilities(str1):
     # ascii 40-126 are available in str1
     return (ord(str1[0])-40)*87 + (ord(str1[1])-40)

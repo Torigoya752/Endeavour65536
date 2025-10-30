@@ -144,6 +144,35 @@ def GeneratePLegal():
     except FileNotFoundError:
         print("pLegal does not exist")
         
+def GenerateQLegalLeft():
+    result = []
+    for ro3 in range(5):
+        for ro2 in range(5):
+            for ro1 in range(5):
+                for ro0 in range(5):
+                    valid = True
+                    if(ro0==0 and ro1==0 and ro2==0 and ro3==0):
+                        valid = False
+                    if(ro1==0 and ro0!=0 and ro2!=0):
+                        valid = False
+                    elif(ro2==0 and ro1!=0 and ro3!=0):
+                        valid = False
+                    elif(ro1==0 and ro0!=0 and ro3!=0):
+                        valid = False
+                    if(valid):
+                        tempNumberOnBoard = ro0 + ro1 + ro2 + ro3
+                        bin0 = 2**ro0-1
+                        bin1 = 2**ro1-1
+                        bin2 = 2**ro2-1
+                        bin3 = 2**ro3-1
+                        binBoard= bin0 + bin1*16 + bin2*256 + bin3*4096
+                        logging.info(str(binBoard)+" "+str(tempNumberOnBoard))
+                        result.append((binBoard, tempNumberOnBoard))
+    with open("./qLegal/left.txt", "w") as f:
+        for item in result:
+            f.write(str(item[0])+" "+str(item[1])+"\n")
+            
+        
         
 if __name__ == '__main__':
-    GenerateQLegal()
+    GenerateQLegalLeft()

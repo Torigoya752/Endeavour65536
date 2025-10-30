@@ -42,6 +42,7 @@ def traversalFunc(traversalSum, blockUsed):
             for item in tempToAppend:
                 tempResult.append(copy.deepcopy(item))
     return result # deque format
+# function traversalFunc
         
         
 if(__name__ == "__main__"):
