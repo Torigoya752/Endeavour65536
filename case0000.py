@@ -250,6 +250,8 @@ def traversal989694():
                     # feed them into the bfs system
             # traversal 0-15, locate the upper 32768, then go down until the other square to locate 32768 is found
     logging.info(caseNumQ62)
+    for i in range(20000):
+        logging.info(listBoardQ98[i])
         
 
 if (__name__ == "__main__"):

@@ -2,6 +2,8 @@ import numpy as np
 import copy
 import os
 import logging
+from collections import deque
+import random
 
 logging.basicConfig(
     level=logging.INFO,
@@ -12,48 +14,7 @@ logging.basicConfig(
 
 class Err65536(Exception):
     pass
-'''
-# load qLegal
-with open ("./qLegal/up.txt", "r") as f:
-    lines = f.readlines()
-qCanFromUpList = []
-for line in lines:
-    qCanFromUpList.append(int(line.rstrip()[0]))
-QCANFROMUP = tuple(qCanFromUpList)
 
-# down
-with open ("./qLegal/down.txt", "r") as f:
-    lines = f.readlines()
-qCanFromDownList = []
-for line in lines:
-    qCanFromDownList.append(int(line.rstrip()[0]))
-QCANFROMDOWN = tuple(qCanFromDownList)
-
-
-# left
-with open ("./qLegal/left.txt", "r") as f:
-    lines = f.readlines()
-qCanFromLeftList = []
-for line in lines:
-    qCanFromLeftList.append(int(line.rstrip()[0]))
-QCANFROMLEFT = tuple(qCanFromLeftList)
-
-# right
-with open ("./qLegal/right.txt", "r") as f:
-    lines = f.readlines()
-qCanFromRightList = []
-for line in lines:
-    qCanFromRightList.append(int(line.rstrip()[0]))
-QCANFROMRIGHT = tuple(qCanFromRightList)
-    
-# exist
-with open ("./qLegal/exist.txt", "r") as f:
-    lines = f.readlines()
-qExistList = []
-for line in lines:
-    qExistList.append(int(line.rstrip()[0]))
-QEXIST = tuple(qExistList)
-'''    
 def CalulateTotalPossibilities(str1):
     # ascii 40-126 are available in str1
     return (ord(str1[0])-40)*87 + (ord(str1[1])-40)
@@ -209,15 +170,123 @@ class Q:
             else:
                 raise Err65536("Illegal Q string. The first letter of the section is NOT p or P")
         
+class PlayP:
+    def __init__(self,list1):
+        # sanity check
+        if(len(list1)!=16):
+            raise Err65536("Illegal P list. The length is not 16")
+        for i in range(16):
+            if(not(-1/64 < list1[i] - int(list1[i]) < 1/64)):
+                raise Err65536("Illegal P list. Non-integer value")
+            if(not(0<=list1[i]<=31)):
+                raise Err65536("Illegal P list. Out of range")
+        # sanity check
+        self.listBoard = list1[:]
         
+        # definition
+        # 0 stands for empty, 1-17 stands for 2-131072, 18-21 are stones, 22-31 stand for large numbers
         
+    def transpose(self):
+        temp0,temp1,temp2,temp3,temp4,temp5 = self.listBoard[1],self.listBoard[2],self.listBoard[3],self.listBoard[6],self.listBoard[7],self.listBoard[11]
+        self.listBoard[1],self.listBoard[2],self.listBoard[3],self.listBoard[6],self.listBoard[7],self.listBoard[11] = self.listBoard[4],self.listBoard[8],self.listBoard[12],self.listBoard[9],self.listBoard[13],self.listBoard[14]
+        self.listBoard[4],self.listBoard[8],self.listBoard[12],self.listBoard[9],self.listBoard[13],self.listBoard[14] = temp0,temp1,temp2,temp3,temp4,temp5
+        
+    def mirrorLr(self):
+        tempRo1 = self.listBoard[0:4]
+        tempRo1.reverse()
+        tempRo2 = self.listBoard[4:8]
+        tempRo2.reverse()
+        tempRo3 = self.listBoard[8:12]
+        tempRo3.reverse()
+        tempRo4 = self.listBoard[12:16]
+        tempRo4.reverse()
+        self.listBoard = tempRo1 + tempRo2 + tempRo3 + tempRo4
+        
+    def transposeDl(self):
+        temp0,temp1,temp2,temp3,temp4,temp5 = self.listBoard[0],self.listBoard[1],self.listBoard[2],self.listBoard[4],self.listBoard[5],self.listBoard[8]
+        self.listBoard[0],self.listBoard[1],self.listBoard[2],self.listBoard[4],self.listBoard[5],self.listBoard[8] = self.listBoard[15],self.listBoard[11],self.listBoard[7],self.listBoard[14],self.listBoard[10],self.listBoard[13]
+        self.listBoard[15],self.listBoard[11],self.listBoard[7],self.listBoard[14],self.listBoard[10],self.listBoard[13] = temp0,temp1,temp2,temp3,temp4,temp5
     
+    def goLeft(self):
+        listBackup = self.listBoard[:]
         
+        # extract rows
+        listResult = []
+        for ro in range(4):
+            dequeRo = deque(self.listBoard[ro*4:(ro+1)*4])
+            tempConnect = 0
+            listResultRo = []
+            while(dequeRo):
+                popLeft = dequeRo.popleft()
+                if(popLeft == 0):
+                    continue
+                if(popLeft == tempConnect and popLeft not in [17,18,19,20,31]):
+                    tempConnect = 0
+                    listResultRo[-1] += 1
+                else:
+                    tempConnect = popLeft
+                    listResultRo.append(popLeft)
+            while(len(listResultRo)<4):
+                listResultRo.append(0)
+            listResult.extend(listResultRo)
+        # extract rows
         
+        self.listBoard = listResult[:]
+        
+        if(listBackup == listResult):
+            return False
+        else:
+            # choose a block with value 0 at random
+            tempZeroList = []
+            for i in range(16):
+                if(self.listBoard[i] == 0):
+                    tempZeroList.append(i)
+            randomIndex = random.choice(tempZeroList)
+            random2or4 = random.randint(1,10)
+            if(random2or4 <= 9):
+                self.listBoard[randomIndex] = 1
+            else:
+                self.listBoard[randomIndex] = 2
+            return True
+    
+    def goUp(self):
+        self.transpose()
+        tempBool = self.goLeft()
+        self.transpose()
+        return tempBool
+    
+    def goRight(self):
+        self.mirrorLr()
+        tempBool = self.goLeft()
+        self.mirrorLr()
+        return tempBool
+    
+    def goDown(self):
+        self.transposeDl()
+        tempBool = self.goLeft()
+        self.transposeDl()
+        return tempBool
+    
+    def printBoard(self):
+        tempMapSpace = [6,6,6,6, 5,5,5, 4,4,4, 3,3,3,3, 2,2,2, 1, 2,2,2, 4,4,4,4,4,4,4,4,4,4,4]
+        tempMapStr = ["X","2","4","8","16","32","64","128","256","512","1024","2048","4096","8192","16384","32768","65536","131072"]
+        tempMapStr = tempMapStr + ["stone","stone","stone"]
+        tempMapStr = tempMapStr + ["s21","s22","s23","s24","s25","s26","s27","s28","s29","s30","s31"]
+        for i in range(32):
+            tempStr = tempMapStr[i]
+            for j in range(tempMapSpace[i]):
+                tempStr = tempStr + " "
+            tempMapStr[i] = tempStr
+        print(tempMapStr[self.listBoard[0]]+tempMapStr[self.listBoard[1]]+tempMapStr[self.listBoard[2]]+tempMapStr[self.listBoard[3]]+"\012")
+        print(tempMapStr[self.listBoard[4]]+tempMapStr[self.listBoard[5]]+tempMapStr[self.listBoard[6]]+tempMapStr[self.listBoard[7]]+"\012")
+        print(tempMapStr[self.listBoard[8]]+tempMapStr[self.listBoard[9]]+tempMapStr[self.listBoard[10]]+tempMapStr[self.listBoard[11]]+"\012")
+        print(tempMapStr[self.listBoard[12]]+tempMapStr[self.listBoard[13]]+tempMapStr[self.listBoard[14]]+tempMapStr[self.listBoard[15]]+"\012")
 
 
 if __name__ == '__main__':
-    a = [[1,2],[3,4]]
-    b = copy.deepcopy(a)
-    a[0][0] = 5
-    logging.info(b)
+    tempList = [1,0,0,0, 3,0,0,0, 2,0,0,0, 4,0,0,0]
+    playP = PlayP(tempList)
+    print(playP.goDown())
+    playP.printBoard()
+        
+    
